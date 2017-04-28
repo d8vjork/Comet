@@ -621,7 +621,6 @@ h6 {
 		.comment-form-email label, 
 		.comment-form-url label,
 		.comment-form-comment label {
-			float: left;
 			padding-top: 8px;
 			display: inline-block;
 			width: 90px;
@@ -633,7 +632,6 @@ h6 {
 			padding-right: 20px;
 		}
 		.required {
-			float: left;
 			display: inline-block;
 			width: 15px;
 			padding: 8px 0px 0px 5px;
@@ -791,7 +789,6 @@ h6 {
 #content .alignleft,
 #content img.alignleft {
 	display: inline;
-	float: left;
 }
 #content img.alignleft,
 #content .wp-caption.alignleft {
@@ -802,7 +799,6 @@ h6 {
 #content .alignright,
 #content img.alignright {
 	display: inline;
-	float: right;
 }
 #content img.alignright,
 #content .wp-caption.alignright {

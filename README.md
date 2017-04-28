@@ -1,2 +1,4 @@
 # Comet
-Comet template from http://frostpress.com/themes/comet/ to a new template
+New Comet template renewing tons of thing.
+
+**Template originally created by [Frostpress](http://frostpress.com/themes/comet/) with GPLv3 license.**
