@@ -1,0 +1,114 @@
+@config "../../tailwind.config.js";
+@import "tailwindcss";
+@source "../../*.php";
+@source "../../inc/**/*.php";
+@source "../../assets/js/**/*.js";
+@import "./components/wordpress.css";
+
+@theme {
+  --color-comet-page: #e5e5e5;
+  --color-comet-surface: #ffffff;
+  --color-comet-text: #444444;
+  --color-comet-muted: #666666;
+  --color-comet-border: #d2d2d2;
+  --color-comet-link: #b91313;
+  --color-comet-link-hover: #e81e1e;
+  --font-comet-body: Georgia, Cambria, "Palatino Linotype", serif;
+  --font-comet-heading: "Droid Sans", Helvetica, Arial, sans-serif;
+  --font-comet-display: "Droid Serif", Georgia, serif;
+  --font-comet-ui: Verdana, Tahoma, Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--color-comet-page);
+  }
+
+  body {
+    @apply m-0 mb-5 bg-[var(--color-comet-page)] text-[var(--color-comet-text)];
+    font: var(--comet-body-size, 16px)/1.7 var(--comet-body-font, var(--font-comet-body));
+  }
+
+  a {
+    @apply text-[var(--comet-link-color,#b91313)] no-underline;
+  }
+
+  a:hover {
+    @apply text-[var(--comet-link-hover-color,#e81e1e)] underline;
+  }
+
+  img {
+    @apply h-auto max-w-full;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .site-frame {
+    @apply mx-auto max-w-site px-4 pb-6;
+  }
+
+  .site-header {
+    @apply overflow-hidden py-10;
+  }
+
+  .site-branding {
+    @apply flex flex-wrap items-center gap-6;
+  }
+
+  .site-title {
+    @apply m-0 font-display text-[2.375rem] italic leading-none text-[#333333];
+    letter-spacing: -0.04em;
+  }
+
+  .site-description {
+    @apply mt-2.5 text-[0.9375rem] italic text-[#858585];
+  }
+
+  .site-layout {
+    @apply grid gap-2.5;
+  }
+
+  .site-main {
+    @apply min-w-0 overflow-hidden border-y-4 border-solid bg-white px-[30px] pb-[30px];
+    border-color: var(--comet-border-color, #d2d2d2);
+  }
+
+  .sidebar {
+    @apply overflow-hidden border-y-4 border-solid;
+    border-color: var(--comet-border-color, #d2d2d2);
+  }
+
+  .menu-toggle {
+    @apply hidden min-h-11 items-center justify-center rounded-none border-2 border-solid bg-white px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#666666];
+    border-color: var(--comet-border-color, #d2d2d2);
+  }
+
+  @media (max-width: 960px) {
+    .site-layout {
+      @apply flex flex-col;
+    }
+
+    .site-main {
+      order: 1;
+    }
+
+    #c1 {
+      order: 2;
+    }
+
+    #c3 {
+      order: 3;
+    }
+  }
+}

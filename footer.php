@@ -1,26 +1,24 @@
-		</div><!-- /c2 -->
-		
-		<div id="c3">
+<?php
+/**
+ * The footer for the theme.
+ *
+ * @package Comet
+ */
+?>
+			</main>
 
-			<?php get_sidebar('right'); ?>
+			<aside id="c3" class="sidebar sidebar-right" aria-label="<?php esc_attr_e( 'Right sidebar', 'comet' ); ?>">
+				<?php if ( comet_has_right_sidebar() ) : ?>
+					<?php get_sidebar( 'right' ); ?>
+				<?php endif; ?>
+			</aside>
+		</div>
 
-		</div><!-- /c3 -->
-
-		<div id="footer">
-	
-			<a href="https://unikia.es" target="_blank" rel="external" title="Diseño web por Unikia"><img src="https://unikia.es/images/unikia_alt.png" alt="Diseño web por Unikia" style="width:88px"></a>
-	
-			<?php
-			$fp_options = get_option('fp_options');
-			
-			echo $fp_options['fp_footer'];
-			?>
-		
-		</div><!-- /footer -->
-		
-	</div><!-- /content -->
-
-</div><!-- /wrap -->
+		<footer id="footer" class="site-footer">
+			<div class="site-footer__text" data-default-text="<?php echo esc_attr( comet_get_default_footer_text() ); ?>"><?php comet_render_footer_text(); ?></div>
+		</footer>
+	</div>
+</div>
 
 <?php wp_footer(); ?>
 

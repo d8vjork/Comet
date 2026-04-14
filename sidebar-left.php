@@ -1,21 +1,32 @@
-<ul class="widgets">
+<?php
+/**
+ * Left sidebar template.
+ *
+ * @package Comet
+ */
+?>
 
-<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('Sidebar Left') ) { ?>
+<div class="widgets">
+	<?php if ( ! dynamic_sidebar( 'left-sidebar' ) ) : ?>
+		<section class="widget widget_recent_entries">
+			<h2 class="widget-title"><?php esc_html_e( 'Recent Posts', 'comet' ); ?></h2>
+			<ul>
+				<?php
+				wp_get_archives(
+					array(
+						'type'  => 'postbypost',
+						'limit' => 5,
+					)
+				);
+				?>
+			</ul>
+		</section>
 
-	<li class="widget widget_search">
-		<h2><?php _e('Recent Posts','comet'); ?></h2>
-		<ul>
-			<?php wp_get_archives('type=postbypost&limit=5'); ?>
-		</ul>
-	</li>
-	
-	<li class="widget widget_links">
-		<h2><?php _e('Bookmarks','comet'); ?></h2>
-		<ul>
-			<?php wp_list_bookmarks('title_li&categorize=0'); ?>
-		</ul>
-	</li>
-
-<?php } ?>
-
-</ul><!-- /widgets -->
+		<section class="widget widget_archive">
+			<h2 class="widget-title"><?php esc_html_e( 'Archives', 'comet' ); ?></h2>
+			<ul>
+				<?php wp_get_archives( array( 'type' => 'monthly' ) ); ?>
+			</ul>
+		</section>
+	<?php endif; ?>
+</div>

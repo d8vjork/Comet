@@ -1,0 +1,17 @@
+{
+  "name": "comet-theme",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Modernized build pipeline for the Comet WordPress theme.",
+  "scripts": {
+    "build": "tailwindcss -i ./src/css/main.css -o ./assets/css/theme.css --minify",
+    "dev": "tailwindcss -i ./src/css/main.css -o ./assets/css/theme.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "@tailwindcss/postcss": "^4.1.11",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^4.1.11"
+  }
+}

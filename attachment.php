@@ -1,94 +1,113 @@
-<?php get_header(); ?>
+<?php
+/**
+ * Attachment template.
+ *
+ * @package Comet
+ */
 
-<?php if (have_posts()) : ?>
-  
-	<?php while (have_posts()) : the_post(); ?>
+get_header();
+?>
 
-	<!-- post -->
-	<div <?php post_class(); ?> id="post-<?php the_ID(); ?>">
-	<?php if( is_single() ) { ?>
-		<h1 class="post-title"><?php the_title(); ?></h1>
-	<?php } else { ?>
-		<h1 class="post-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php the_title(); ?></a></h1>
-	<?php } ?>
-		<div class="post-text">
+<?php if ( have_posts() ) : ?>
+	<?php while ( have_posts() ) : the_post(); ?>
 		<?php
-		if ( ! empty( $post->post_parent ) ) { ?>
-			<p class="page-title">
-				<?php _e('This is an attachment for the post','comet'); ?> <a href="<?php echo get_permalink( $post->post_parent ); ?>" rel="gallery"><?php echo get_the_title( $post->post_parent ); ?></a>
-			</p>
-		<?php 
+		global $post;
+
+		$next_attachment_url = wp_get_attachment_url( $post->ID );
+
+		if ( wp_attachment_is_image( $post->ID ) && ! empty( $post->post_parent ) ) {
+			$image_attachments = get_posts(
+				array(
+					'post_parent'    => $post->post_parent,
+					'post_status'    => 'inherit',
+					'post_type'      => 'attachment',
+					'post_mime_type' => 'image',
+					'orderby'        => 'menu_order ID',
+					'order'          => 'ASC',
+					'numberposts'    => -1,
+				)
+			);
+
+			$attachment_ids = wp_list_pluck( $image_attachments, 'ID' );
+			$current_index  = array_search( $post->ID, $attachment_ids, true );
+
+			if ( false !== $current_index && count( $attachment_ids ) > 1 ) {
+				$next_index          = isset( $attachment_ids[ $current_index + 1 ] ) ? $current_index + 1 : 0;
+				$next_attachment_url = get_attachment_link( $attachment_ids[ $next_index ] );
+			}
 		}
-			
-		if ( wp_attachment_is_image() ) {
-			$attachments = array_values( get_children( array( 'post_parent' => $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID' ) ) );
-			foreach ( $attachments as $k => $attachment ) {
-				if ( $attachment->ID == $post->ID )
-					break;
-			}
-			$k++;
-			// If there is more than 1 image attachment in a gallery
-			if ( count( $attachments ) > 1 ) {
-				if ( isset( $attachments[ $k ] ) )
-					// get the URL of the next image attachment
-					$next_attachment_url = get_attachment_link( $attachments[ $k ]->ID );
-				else
-					// or get the URL of the first image attachment
-					$next_attachment_url = get_attachment_link( $attachments[ 0 ]->ID );
-			} else {
-				// or, if there's only 1 image attachment, get the URL of the image
-				$next_attachment_url = wp_get_attachment_url();
-			}
 		?>
-			<p class="attachment">
-				<?php echo wp_get_attachment_image( $post->ID, array( 900, 9999 ) ); ?>
-			</p>
-			
-			<p><?php if ( !empty( $post->post_excerpt ) ) the_excerpt(); ?></p>
-						
-			<div class="post">
-				<div class="alignleft"><?php previous_image_link( false, '&larr; Previous Image' ); ?></div>
-				<div class="alignright"><?php next_image_link( false, 'Next Image &rarr;' ); ?></div>
+
+		<article id="post-<?php the_ID(); ?>" <?php post_class( 'entry attachment-entry' ); ?>>
+			<header class="entry-header">
+				<h1 class="entry-title post-title"><?php the_title(); ?></h1>
+			</header>
+
+			<div class="entry-content post-text">
+				<?php if ( ! empty( $post->post_parent ) ) : ?>
+					<p class="page-title">
+						<?php esc_html_e( 'This is an attachment for the post', 'comet' ); ?>
+						<a href="<?php echo esc_url( get_permalink( $post->post_parent ) ); ?>" rel="gallery"><?php echo esc_html( get_the_title( $post->post_parent ) ); ?></a>
+					</p>
+				<?php endif; ?>
+
+				<?php if ( wp_attachment_is_image( $post->ID ) ) : ?>
+					<figure class="attachment-media">
+						<a href="<?php echo esc_url( $next_attachment_url ); ?>" rel="attachment">
+							<?php echo wp_get_attachment_image( $post->ID, 'large' ); ?>
+						</a>
+
+						<?php if ( has_excerpt() ) : ?>
+							<figcaption class="attachment-caption"><?php the_excerpt(); ?></figcaption>
+						<?php endif; ?>
+					</figure>
+
+					<nav class="navigation image-navigation" aria-label="<?php esc_attr_e( 'Image navigation', 'comet' ); ?>">
+						<div class="alignleft"><?php previous_image_link( false, esc_html__( 'Previous Image', 'comet' ) ); ?></div>
+						<div class="alignright"><?php next_image_link( false, esc_html__( 'Next Image', 'comet' ) ); ?></div>
+					</nav>
+				<?php else : ?>
+					<p><a href="<?php echo esc_url( wp_get_attachment_url( $post->ID ) ); ?>" rel="attachment"><?php echo esc_html( wp_basename( get_attached_file( $post->ID ) ) ); ?></a></p>
+				<?php endif; ?>
 			</div>
 
-		<?php } else { ?>
-			<a href="<?php echo wp_get_attachment_url(); ?>" title="<?php echo esc_attr( get_the_title() ); ?>" rel="attachment"><?php echo basename( get_permalink() ); ?></a>
-		<?php } ?>
+			<footer class="post-meta entry-meta">
+				<div class="entry-meta__row">
+					<?php if ( comments_open() || get_comments_number() ) : ?>
+						<span class="comment-link">
+							<?php comments_popup_link( esc_html__( 'No Comments', 'comet' ), esc_html__( '1 Comment', 'comet' ), esc_html__( '% Comments', 'comet' ) ); ?>
+						</span>
+					<?php endif; ?>
 
-		</div>
-		<div class="post-meta">
-			<div class="row">
-				<?php if ( comments_open() ) { ?>
-					<div class="alignright"><?php comments_popup_link(__('No Comments','comet'),__('1 Comment','comet'),__('% Comments','comet')); ?></div>
-				<?php } ?>
-				<span class="post-author">by <?php the_author_posts_link() ?> on </span><em><?php the_time('F j, Y') ?></em>
-				&nbsp;&bull;&nbsp; <a href="<?php the_permalink() ?>" rel="bookmark">Permalink</a>
-				<?php edit_post_link(__('Edit Post','comet'), ' &nbsp;&bull;&nbsp; ', ''); ?>
-			</div>
-		</div>
-	</div>
-	<!--/post -->
-	
-	<div class="sep"></div>
+					<?php if ( comet_should_show_post_author() ) : ?>
+						<span class="post-author">
+							<?php esc_html_e( 'By', 'comet' ); ?>
+							<?php the_author_posts_link(); ?>
+						</span>
+					<?php endif; ?>
 
-	<?php comments_template(); ?>
-		
+					<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
+
+					<a href="<?php the_permalink(); ?>" rel="bookmark"><?php esc_html_e( 'Permalink', 'comet' ); ?></a>
+
+					<?php edit_post_link( esc_html__( 'Edit Post', 'comet' ), '<span class="edit-link">', '</span>' ); ?>
+				</div>
+			</footer>
+		</article>
+
+		<?php if ( comments_open() || get_comments_number() ) : ?>
+			<?php comments_template(); ?>
+		<?php endif; ?>
 	<?php endwhile; ?>
-
-	<div class="navigation">
-		<div class="alignleft"><?php next_posts_link('&laquo; '.__('Older Posts','comet')) ?></div>
-		<div class="alignright"><?php previous_posts_link(__('Newer Posts','comet').' &raquo;') ?></div>
-	</div>
-
-	<?php else : ?>
-
-	<div class="post">
-		<h1 class="post-title"><?php _e('Post not found','comet'); ?></h1>
-		<div class="post-text">
-			<p><?php _e('The post you were looking for could not be found.','comet'); ?></p>
+<?php else : ?>
+	<article class="entry">
+		<header class="entry-header">
+			<h1 class="entry-title post-title"><?php esc_html_e( 'Post not found', 'comet' ); ?></h1>
+		</header>
+		<div class="entry-content post-text">
+			<p><?php esc_html_e( 'The post you were looking for could not be found.', 'comet' ); ?></p>
 		</div>
-	</div>
-		
+	</article>
 <?php endif; ?>
 
 <?php get_footer(); ?>

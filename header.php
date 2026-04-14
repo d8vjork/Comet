@@ -1,154 +1,113 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-	
-<?php $fp_options = get_option('fp_options'); ?>
+<?php
+/**
+ * The header for the theme.
+ *
+ * @package Comet
+ */
 
-<head profile="http://gmpg.org/xfn/11">
-	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
-	<title><?php wp_title('-',true,'right'); ?><?php bloginfo('name'); ?> - <?php bloginfo('description'); ?></title>
-	
-	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
-	<link rel="icon" href="<?php bloginfo('template_directory'); ?>/favicon.ico" />
-	<link rel="license" href="//creativecommons.org/licenses/by-nc-nd/4.0/">
-	
-	<link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>" type="text/css" media="all" />
-	<link rel="stylesheet" href="<?php bloginfo('stylesheet_directory'); ?>/print.css" type="text/css" media="print" />
-	<link rel="stylesheet" href="<?php bloginfo('stylesheet_directory'); ?>/_<?php if ( $fp_options['fp_color'] == '' ) { echo 'grey'; } else { echo  $fp_options['fp_color']; } ?>.css" type="text/css" />
-	<!--[if lte IE 7]>
-	<link rel="stylesheet" href="<?php bloginfo('stylesheet_directory'); ?>/ie.css" type="text/css" media="all" />
-	<![endif]-->
-
-	<style type="text/css">
-	<?php
-	if ( $fp_options['fp_font'] != '' ) { // font family
-		echo "body, input, select, textarea { font-family: ". $fp_options['fp_font'] .", Verdana, Tahoma, Helvetica, sans-serif; }\n";
-	}
-	if ( $fp_options['fp_font_size'] != '' ) { // font size
-		echo "body, input, select, textarea { font-size: ". $fp_options['fp_font_size'] ."; }\n";
-	}
-
-	if( $fp_options['fp_layout'] == 'left') { // sidebar to the left
-		echo "#c1 { display: block; }\n";
-		echo "#c2 { margin: 0 0 0 10px; }\n";
-		echo "#c3 { display: none; }\n";
-	}
-	if( $fp_options['fp_layout'] == 'left and right') { // sidebars left and right
-		echo "#c1 { display: block; width: 200px; }\n";
-		echo "#c2 { width: 480px; margin: 0 10px 0 10px; }\n";
-		echo "#c3 { width: 200px; }\n";
-		echo "#searchform #s { width: 160px; }\n";
-	}
-	if( $fp_options['fp_layout'] == 'hidden') { // no sidebars
-		echo "#c2 { width: 900px; margin: 0; }\n";
-		echo "#c3 { display: none; }\n";
-	}
-	
-	if( $fp_options['fp_post_author'] != 'checked="checked"' ) { // display post authors
-		echo ".post-author { display: none; }\n";
-	}
-	
-	echo $fp_options['fp_css'] ."\n"; // custom css
-	?>
-	</style>
-
-	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' );?>
-
+$has_secondary_menu = has_nav_menu( 'secondary-menu' );
+?>
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php if ( is_singular() && pings_open( get_queried_object_id() ) ) : ?>
+		<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
+	<?php endif; ?>
+	<link rel="icon" href="<?php echo esc_url( get_template_directory_uri() . '/favicon.ico' ); ?>">
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
 
-<div id="wrap">
+<a class="skip-link screen-reader-text" href="#primary-content"><?php esc_html_e( 'Skip to content', 'comet' ); ?></a>
 
-	<?php
-	// using WordPress 3.0 or higher
-	if ( function_exists('has_nav_menu') ) {
-		// has primary menu
-		if ( has_nav_menu('primary-menu') ) {
-			wp_nav_menu( array( 'theme_location' => 'primary-menu', 'menu_id' => 'primary-menu', 'container' => '', 'fallback_cb' => '' ) );
-		}
-		// no menu assigned, display default
-		elseif ( !has_nav_menu('primary-menu') && !has_nav_menu('secondary-menu') ) {
-			echo '<ul class="menu">';
-			wp_list_pages( 'title_li=' );
-			echo '</ul>';
-		}
-	// using old version of WordPress
-	} else {
-		echo '<ul class="menu">';
-		wp_list_pages( 'title_li=' );
-		echo '</ul>';
-	}
-	?>
+<div id="page" class="site">
+	<div class="site-frame">
+		<nav class="top-navigation" aria-label="<?php esc_attr_e( 'Primary menu', 'comet' ); ?>">
+			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu-list">
+				<span class="menu-toggle__label"><?php esc_html_e( 'Menu', 'comet' ); ?></span>
+			</button>
+			<?php
+			wp_nav_menu(
+				array(
+					'theme_location' => 'primary-menu',
+					'menu_id'        => 'primary-menu-list',
+					'menu_class'     => 'menu menu--primary',
+					'container'      => false,
+					'fallback_cb'    => 'comet_page_menu',
+					'depth'          => 3,
+				)
+			);
+			?>
+		</nav>
 
-	<div id="header">
-		<?php
-		// has logo
-		if( $fp_options['fp_logo'] != '' ) {
-		
-			echo "<a href='". get_option('siteurl') ."'><img src='". $fp_options['fp_logo'] ."' alt='". get_option('blogname') ."' border='0' class='". $fp_options['fp_logo_pos'] ."' /></a>";
+		<header id="masthead" class="site-header">
+			<div class="site-branding">
+				<?php if ( has_custom_logo() ) : ?>
+					<div class="site-logo"><?php the_custom_logo(); ?></div>
+				<?php endif; ?>
 
-		// no logo; normal heading
-		} else {
+				<div class="site-title-group">
+					<?php if ( is_front_page() && is_home() ) : ?>
+						<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
+					<?php else : ?>
+						<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
+					<?php endif; ?>
 
-			echo "<h1><a href='". get_option('siteurl') ."'>". get_option('blogname') ."</a></h1>";
-
-			if( get_bloginfo('description') ) {
-				echo "<h4>". get_bloginfo('description') ."</h4>";
-			}
-
-		}
-		?>
-	</div><!-- /header -->
-	
-	<?php
-	// using WordPress 3.0 or higher
-	if ( function_exists('has_nav_menu') ) {
-		// has secondary menu
-		if ( has_nav_menu('secondary-menu') ) {
-			wp_nav_menu( array( 'theme_location' => 'secondary-menu', 'menu_id' => 'secondary-menu', 'container' => '', 'fallback_cb' => '' ) );
-		}
-	}
-	?>
-
-	<div id="content">
-		
-		<div id="c1">
-			
-			<?php get_sidebar('left'); ?>
-			
-		</div>
-
-		<div id="c2">
-
-			<?php if ( is_archive() || is_search() ) { ?>
-				<div class="page-head">
-
-				<?php if (is_tag()) { ?>
-
-					<?php _e('All posts tagged','comet'); ?> <b><?php single_tag_title(''); ?></b>
-					<?php echo tag_description(); ?>
-					
-				<?php } elseif (is_category()) { ?>
-
-					<?php _e('All posts in category','comet'); ?> <b><?php single_cat_title(''); ?></b>
-
-				<?php } elseif (is_day()) { ?>
-
-					<?php _e('All posts for the day','comet'); ?> <b><?php the_time('F jS, Y'); ?></b>
-
-				<?php } elseif (is_month()) { ?>
-
-					<?php _e('All posts for the month','comet'); ?> <b><?php the_time('F, Y'); ?></b>
-
-				<?php } elseif (is_year()) { ?>
-
-					<?php _e('All posts for the year','comet'); ?> <b><?php the_time('Y'); ?></b>
-
-				<?php } elseif (is_search()) { ?>
-
-					<?php _e('All posts found when searching for','comet'); ?> <b><?php the_search_query(); ?></b>
-
-				<?php } ?>
-
+					<?php $description = get_bloginfo( 'description', 'display' ); ?>
+					<?php if ( $description || is_customize_preview() ) : ?>
+						<p class="site-description"><?php echo esc_html( $description ); ?></p>
+					<?php endif; ?>
 				</div>
-			<?php }?>
+			</div>
+		</header>
+
+		<?php if ( $has_secondary_menu ) : ?>
+			<nav class="sub-navigation" aria-label="<?php esc_attr_e( 'Secondary menu', 'comet' ); ?>">
+				<?php
+				wp_nav_menu(
+					array(
+						'theme_location' => 'secondary-menu',
+						'menu_id'        => 'secondary-menu-list',
+						'menu_class'     => 'menu menu--secondary',
+						'container'      => false,
+						'fallback_cb'    => false,
+						'depth'          => 3,
+					)
+				);
+				?>
+			</nav>
+		<?php endif; ?>
+
+		<div id="content" class="site-layout">
+			<aside id="c1" class="sidebar sidebar-left" aria-label="<?php esc_attr_e( 'Left sidebar', 'comet' ); ?>">
+				<?php if ( comet_has_left_sidebar() ) : ?>
+					<?php get_sidebar( 'left' ); ?>
+				<?php endif; ?>
+			</aside>
+
+			<main id="primary-content" class="site-main">
+				<?php if ( is_archive() || is_search() ) : ?>
+					<header class="page-head archive-intro">
+						<?php if ( is_search() ) : ?>
+							<h1 class="archive-title">
+								<?php
+								printf(
+									/* translators: %s: Search term. */
+									esc_html__( 'Results for "%s"', 'comet' ),
+									esc_html( get_search_query() )
+								);
+								?>
+							</h1>
+						<?php else : ?>
+							<?php the_archive_title( '<h1 class="archive-title">', '</h1>' ); ?>
+						<?php endif; ?>
+
+						<?php $archive_description = get_the_archive_description(); ?>
+						<?php if ( $archive_description ) : ?>
+							<div class="archive-description"><?php echo wp_kses_post( $archive_description ); ?></div>
+						<?php endif; ?>
+					</header>
+				<?php endif; ?>

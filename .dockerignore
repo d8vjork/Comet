@@ -1,0 +1,7 @@
+.git
+.gitignore
+node_modules
+npm-debug.log
+bun.lockb
+db_data
+wordpress_data

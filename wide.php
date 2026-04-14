@@ -1,50 +1,59 @@
 <?php
-/*
-Template Name: Wide
-*/
+/**
+ * Template Name: Wide
+ * Template Post Type: page
+ *
+ * @package Comet
+ */
+
+get_header();
 ?>
 
-<?php get_header(); ?>
+<?php if ( have_posts() ) : ?>
+	<?php while ( have_posts() ) : the_post(); ?>
+		<article id="post-<?php the_ID(); ?>" <?php post_class( 'entry' ); ?>>
+			<header class="entry-header">
+				<h1 class="entry-title post-title"><?php the_title(); ?></h1>
+			</header>
 
-<?php if (have_posts()) : ?>
-  
-	<?php while (have_posts()) : the_post(); ?>
-
-	<!-- post -->
-	<div <?php post_class('post'); ?> id="post-<?php the_ID(); ?>">
-		<h1 class="post-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php the_title(); ?></a></h1>
-		<div class="post-text">
-		<?php
-		the_content(__('Read the full post','comet').' &raquo;');
-		wp_link_pages('before=<div class="post-pages">'.__('Pages','comet').':&after=</div>&next_or_number=number&pagelink=<span>%</span>');
-		?>
-		</div>
-		<div class="post-meta">
-			<div class="row">
-				<?php if ( comments_open() ) { ?>
-					<div class="alignright"><?php comments_popup_link(__('No Comments','comet'),__('1 Comment','comet'),__('% Comments','comet')); ?></div>
-				<?php } ?>
-				<?php edit_post_link(__('Edit Post','comet'), ' &nbsp;&bull;&nbsp; ', ''); ?>
+			<div class="entry-content post-text">
+				<?php the_content( esc_html__( 'Read the full post', 'comet' ) . ' &raquo;' ); ?>
+				<?php
+				wp_link_pages(
+					array(
+						'before' => '<div class="post-pages">' . esc_html__( 'Pages', 'comet' ) . ': ',
+						'after'  => '</div>',
+					)
+				);
+				?>
 			</div>
-		</div>
-	</div>
-	<!--/post -->
-	
-	<div class="sep"></div>
 
-	<?php comments_template(); ?>
-		
+			<footer class="post-meta entry-meta">
+				<div class="entry-meta__row">
+					<?php if ( comments_open() || get_comments_number() ) : ?>
+						<span class="comment-link">
+							<?php comments_popup_link( esc_html__( 'No Comments', 'comet' ), esc_html__( '1 Comment', 'comet' ), esc_html__( '% Comments', 'comet' ) ); ?>
+						</span>
+					<?php endif; ?>
+
+					<?php edit_post_link( esc_html__( 'Edit Post', 'comet' ), '<span class="edit-link">', '</span>' ); ?>
+				</div>
+			</footer>
+		</article>
+
+		<?php if ( comments_open() || get_comments_number() ) : ?>
+			<?php comments_template(); ?>
+		<?php endif; ?>
 	<?php endwhile; ?>
-
-	<?php else : ?>
-
-	<div class="post">
-		<h1 class="post-title"><?php _e('Page not found','comet'); ?></h1>
-		<div class="post-text">
-			<p><?php _e('The page you were looking for could not be found.','comet'); ?></p>
+<?php else : ?>
+	<article class="entry">
+		<header class="entry-header">
+			<h1 class="entry-title post-title"><?php esc_html_e( 'Page not found', 'comet' ); ?></h1>
+		</header>
+		<div class="entry-content post-text">
+			<p><?php esc_html_e( 'The page you were looking for could not be found.', 'comet' ); ?></p>
 		</div>
-	</div>
-		
+	</article>
 <?php endif; ?>
 
 <?php get_footer(); ?>

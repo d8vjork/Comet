@@ -1,0 +1,45 @@
+@layer components {
+  .entry {
+    @apply my-[30px] mb-10 overflow-hidden;
+  }
+
+  .post-title {
+    @apply m-0 font-display text-[2rem] italic leading-[1.3] text-[#333333];
+  }
+
+  .post-text {
+    @apply my-5 overflow-hidden;
+  }
+
+  .post-meta {
+    @apply clear-both overflow-hidden border-y-2 border-dotted py-2.5 text-[0.75rem] italic tracking-[0.12em] text-[#b1b1b1];
+    border-color: #eaeaea;
+  }
+
+  .widget {
+    @apply mt-2.5 overflow-hidden p-2.5;
+    background: var(--comet-widget-bg, #f3f3f3);
+  }
+
+  .widget-title {
+    @apply mb-2.5 inline-block px-2.5 py-2 font-body text-[0.75rem] uppercase tracking-[0.12em];
+    background: var(--comet-widget-title-bg, #dfdfdf);
+    color: var(--comet-widget-title-color, #7e7e7e);
+  }
+
+  .comment-list {
+    @apply m-0 list-none p-0;
+  }
+
+  .comment-body {
+    @apply relative overflow-hidden border-b border-solid p-4;
+    background: var(--comet-comment-bg, #f3f3f3);
+    border-color: #e1e1e1;
+  }
+
+  .comment-form input,
+  .comment-form textarea {
+    @apply w-full rounded-none border-2 border-solid bg-[#f9f9f9] px-3 py-2;
+    border-color: #e5e5e5;
+  }
+}
